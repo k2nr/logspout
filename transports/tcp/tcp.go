@@ -7,6 +7,10 @@ import (
 	"github.com/gliderlabs/logspout/router"
 )
 
+const (
+	writeBuffer = 1024 * 1024
+)
+
 func init() {
 	router.AdapterTransports.Register(new(tcpTransport), "tcp")
 	// convenience adapters around raw adapter
@@ -26,6 +30,10 @@ func (_ *tcpTransport) Dial(addr string, options map[string]string) (net.Conn, e
 		return nil, err
 	}
 	conn, err := net.DialTCP("tcp", nil, raddr)
+	if err != nil {
+		return nil, err
+	}
+	err = conn.SetWriteBuffer(writeBuffer)
 	if err != nil {
 		return nil, err
 	}
