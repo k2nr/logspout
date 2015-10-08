@@ -32,17 +32,20 @@ func (_ *tlsTransport) Dial(addr string, options map[string]string) (net.Conn, e
 		log.Println("tls:", err)
 		return nil, err
 	}
-	tcp_conn, err := net.DialTCP("tcp", nil, raddr)
+	tcpConn, err := net.DialTCP("tcp", nil, raddr)
 	if err != nil {
 		log.Println("tls:", err)
 		return nil, err
 	}
-	err = tcp_conn.SetWriteBuffer(writeBuffer)
+	err = tcpConn.SetWriteBuffer(writeBuffer)
 	if err != nil {
 		log.Println("tls:", err)
 		return nil, err
 	}
 
-	conn := tls.Client(tcp_conn, &tls.Config{ServerName: addr})
+	conn := tls.Client(tcpConn, &tls.Config{
+		ServerName:         addr,
+		InsecureSkipVerify: true,
+	})
 	return conn, nil
 }
