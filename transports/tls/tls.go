@@ -2,6 +2,7 @@ package tls
 
 import (
 	"crypto/tls"
+	"log"
 	"net"
 
 	"github.com/gliderlabs/logspout/adapters/raw"
@@ -28,14 +29,17 @@ type tlsTransport int
 func (_ *tlsTransport) Dial(addr string, options map[string]string) (net.Conn, error) {
 	raddr, err := net.ResolveTCPAddr("tcp", addr)
 	if err != nil {
+		log.Println("tls:", err)
 		return nil, err
 	}
 	tcp_conn, err := net.DialTCP("tcp", nil, raddr)
 	if err != nil {
+		log.Println("tls:", err)
 		return nil, err
 	}
 	err = tcp_conn.SetWriteBuffer(writeBuffer)
 	if err != nil {
+		log.Println("tls:", err)
 		return nil, err
 	}
 
